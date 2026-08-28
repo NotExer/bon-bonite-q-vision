@@ -8,6 +8,8 @@ export default defineConfig({
   reporter: [['html', { open: 'never' }], ['list']],
   use: {
     baseURL: process.env.BASE_URL ?? 'https://www.bon-bonite.com',
+    locale: 'es-CO',
+    timezoneId: 'America/Bogota',
     trace: 'retain-on-failure',
     screenshot: 'only-on-failure',
     video: 'retain-on-failure',
