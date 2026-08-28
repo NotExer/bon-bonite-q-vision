@@ -49,8 +49,8 @@ async function getAllProducts(request: APIRequestContext, categoryId: number) {
 
 test.describe('Bon-bonite - auditoría de catálogo API/front', () => {
   test('CAT-01 - los productos de cada categoría pintan datos consistentes', async ({ request, page }) => {
-    test.setTimeout(30 * 60 * 1000);
     const configuredLimit = Number(process.env.PRODUCT_AUDIT_LIMIT ?? DEFAULT_LIMIT_PER_CATEGORY);
+    test.setTimeout(configuredLimit === 0 ? 90 * 60 * 1000 : 15 * 60 * 1000);
     const response = await request.get(`${STORE_API}/products/categories`, {
       params: { per_page: '100' },
     });
