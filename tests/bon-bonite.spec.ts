@@ -53,7 +53,8 @@ test.describe('Bon-bonite - regresión funcional', () => {
   test('E03 - compra de producto hasta checkout sin pago real', async ({ page }) => {
     await page.goto('/producto/tacon-en-cuero-chantilly/');
     await expect(page.getByRole('heading', { name: /zueco en cuero chantilly/i })).toBeVisible();
-    await page.locator('select[name="attribute_pa_talla"]').selectOption({ label: '36' });
+    // El select original está oculto; el usuario interactúa con el botón visible de talla.
+    await page.getByRole('button', { name: '36', exact: true }).click();
     await page.locator('input[name="quantity"]').fill('1');
     await page.getByRole('button', { name: /añadir al carrito/i }).click();
     await expect(page.locator('.cart-contents')).not.toHaveText('0');
