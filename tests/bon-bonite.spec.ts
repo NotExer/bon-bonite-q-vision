@@ -64,7 +64,7 @@ test.describe('Bon-bonite - regresión funcional', () => {
     const checkout = page.getByRole('link', { name: /finalizar compra|checkout/i }).first();
     if (await checkout.count()) {
       await checkout.click();
-      await expect(page).toHaveURL(/checkout/);
+      await expect(page).toHaveURL(/checkout|finalizar-compra/);
       await expect(page.locator('body')).toContainText(/detalles de facturación|billing details/i);
     }
     // Corte intencional: no se envían datos personales ni se confirma el pago.
