@@ -2,6 +2,16 @@
 
 Proyecto de automatización funcional para la primera versión de [bon-bonite.com](https://www.bon-bonite.com/), construido con Playwright y TypeScript.
 
+Repositorio: https://github.com/NotExer/bon-bonite-q-vision
+
+## Estructura
+
+```text
+tests/bon-bonite.spec.ts  # escenarios E01, E02 y E03
+playwright.config.ts      # configuración, reportes y evidencias
+package.json              # scripts y dependencias
+```
+
 ## Escenarios automatizados
 
 1. Navegación y disponibilidad de los módulos Zapatos, Bolsos, Cinturones, Accesorios, Outlet, Bonos de regalo, Mi cuenta y PQRS.
@@ -16,6 +26,13 @@ npx playwright install chromium
 npm test
 ```
 
+Para ejecutar un escenario específico:
+
+```bash
+npx playwright test -g "E01"
+npx playwright test -g "E03"
+```
+
 Para ejecutar registro y actualización, configurar valores de prueba en la sesión:
 
 ```bash
@@ -26,4 +43,8 @@ $env:BONBONITE_NAME='Cliente QA'
 npm test
 ```
 
-La URL pública del repositorio debe reemplazarse en el libro de entrega una vez publicado en GitHub/GitLab/Bitbucket. Propuesta de nombre: `bon-bonite-qa-automation`.
+## Evidencias y límites
+
+En caso de fallo, Playwright conserva screenshot, video y trace. El escenario E03 llega hasta checkout y no confirma un pago. El escenario E02 requiere datos de prueba autorizados y se omite si faltan las variables de entorno.
+
+La ejecución continua está definida en `.github/workflows/playwright.yml`.
