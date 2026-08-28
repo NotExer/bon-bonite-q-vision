@@ -4,6 +4,7 @@
   "scripts": {
     "test": "playwright test",
     "test:headed": "playwright test --headed",
+    "test:catalog": "playwright test tests/catalog-api.spec.ts",
     "report": "playwright show-report"
   },
   "devDependencies": {
