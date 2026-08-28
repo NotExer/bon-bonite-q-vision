@@ -17,15 +17,6 @@ test.describe('Bon-bonite - regresión funcional', () => {
   });
 
   test('E03 - compra de producto hasta checkout sin pago real', async ({ page }) => {
-    // Evita que el plugin de geolocalización redirija el runner de GitHub al
-    // storefront internacional antes de validar el carrito colombiano.
-    await page.context().addCookies([{
-      name: 'ip2location_redirection_first_visit',
-      value: '1',
-      domain: 'www.bon-bonite.com',
-      path: '/',
-      secure: true,
-    }]);
     await page.goto('/producto/tacon-en-cuero-chantilly/');
     await expect(page.getByRole('heading', { name: /zueco en cuero chantilly/i })).toBeVisible();
 
@@ -40,17 +31,39 @@ test.describe('Bon-bonite - regresión funcional', () => {
     await expect(page.locator('input[name="quantity"]')).toHaveValue('1');
     await page.getByRole('button', { name: /añadir al carrito/i }).click();
 
-    // La tienda puede redirigir temporalmente al storefront internacional según
-    // la IP del runner. Validamos el resultado en el carrito colombiano.
-    await page.goto('/carrito/', { waitUntil: 'domcontentloaded' });
-    await expect(page).toHaveURL(/www\.bon-bonite\.com\/carrito/);
-    await expect(page.locator('body')).toContainText(/zueco en cuero chantilly/i);
-    const checkout = page.getByRole('link', { name: /finalizar compra|checkout/i }).first();
-    if (await checkout.count()) {
-      await checkout.click();
-      await expect(page).toHaveURL(/checkout|finalizar-compra/);
+    // El storefront puede redirigir al runner de GitHub según su IP. Por eso
+    // confirmamos el carrito en la Store API usando las cookies de esta sesión.
+    const cartResponse = await page.request.get(
+      'https://www.bon-bonite.com/wp-json/wc/store/v1/cart',
+      { maxRedirects: 0 },
+    );
+    expect(cartResponse.status()).toBe(200);
+    const cart = await cartResponse.json() as { items: Array<{ name: string; quantity: number }> };
+    expect(cart.items.some((item) =>
+      /zueco en cuero chantilly/i.test(item.name) && item.quantity >= 1,
+    )).toBeTruthy();
+
+    // El endpoint de checkout debe estar disponible, pero no se envían datos
+    // personales ni se confirma ningún pago.
+    const checkoutResponse = await page.request.get(
+      'https://www.bon-bonite.com/finalizar-compra/',
+      { maxRedirects: 0 },
+    );
+    expect(checkoutResponse.status()).toBeLessThan(400);
+
+    if (checkoutResponse.status() === 200) {
+      await page.goto('https://www.bon-bonite.com/finalizar-compra/', {
+        waitUntil: 'domcontentloaded',
+      });
+      await expect(page).toHaveURL(/www\.bon-bonite\.com\/finalizar-compra/);
       await expect(page.locator('body')).toContainText(/detalles de facturación|billing details/i);
+    } else {
+      const redirectLocation = checkoutResponse.headers().location ?? '';
+      expect(redirectLocation).toMatch(/bon-bonite\.us|checkout|finalizar-compra/i);
+      test.info().annotations.push({
+        type: 'note',
+        description: `El runner fue redirigido por geolocalización: ${redirectLocation}`,
+      });
     }
-    // Corte intencional: no se envían datos personales ni se confirma el pago.
   });
 });
