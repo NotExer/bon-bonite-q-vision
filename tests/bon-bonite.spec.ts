@@ -31,10 +31,10 @@ test.describe('Bon-bonite - regresión funcional', () => {
     await expect(page.locator('input[name="quantity"]')).toHaveValue('1');
     await page.getByRole('button', { name: /añadir al carrito/i }).click();
 
-    // El sitio confirma la operación con este aviso. No dependemos del enlace
-    // estándar de WooCommerce ni del contador visual del encabezado.
-    await expect(page.locator('body')).toContainText(/se ha añadido a tu carrito/i);
-    await page.goto('/carrito/');
+    // La tienda puede redirigir temporalmente al storefront internacional según
+    // la IP del runner. Validamos el resultado en el carrito colombiano.
+    await page.goto('/carrito/', { waitUntil: 'domcontentloaded' });
+    await expect(page).toHaveURL(/www\.bon-bonite\.com\/carrito/);
     await expect(page.locator('body')).toContainText(/zueco en cuero chantilly/i);
     const checkout = page.getByRole('link', { name: /finalizar compra|checkout/i }).first();
     if (await checkout.count()) {
