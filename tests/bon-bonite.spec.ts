@@ -55,7 +55,8 @@ test.describe('Bon-bonite - regresión funcional', () => {
     await expect(page.getByRole('heading', { name: /zueco en cuero chantilly/i })).toBeVisible();
     // El select original está oculto; el usuario interactúa con el botón visible de talla.
     await page.getByRole('button', { name: '36', exact: true }).click();
-    await page.locator('input[name="quantity"]').fill('1');
+    // La cantidad visible inicia en 1; el input auxiliar está oculto.
+    await expect(page.locator('input[name="quantity"]')).toHaveValue('1');
     await page.getByRole('button', { name: /añadir al carrito/i }).click();
     await expect(page.locator('.cart-contents')).not.toHaveText('0');
     await page.goto('/carrito/');
