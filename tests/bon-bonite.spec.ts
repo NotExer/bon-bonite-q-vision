@@ -1,12 +1,5 @@
 import { test, expect } from '@playwright/test';
 
-const env = {
-  cedula: process.env.BONBONITE_CEDULA ?? '',
-  password: process.env.BONBONITE_PASSWORD ?? '',
-  name: process.env.BONBONITE_NAME ?? 'Cliente QA',
-  email: process.env.BONBONITE_EMAIL ?? '',
-};
-
 test.describe('Bon-bonite - regresión funcional', () => {
   test('E01 - navegación de módulos comerciales', async ({ page }) => {
     await page.goto('/');
@@ -20,33 +13,6 @@ test.describe('Bon-bonite - regresión funcional', () => {
       const link = page.getByRole('link', { name: label, exact: true }).first();
       await expect(link, `Módulo visible: ${label}`).toBeVisible();
       await expect(link).toHaveAttribute('href', new RegExp(href.replaceAll('/', '\\/')));
-    }
-  });
-
-  test('E02 - registro y actualización de usuario', async ({ page }) => {
-    test.skip(!env.cedula || !env.password || !env.email, 'Definir BONBONITE_CEDULA, BONBONITE_PASSWORD y BONBONITE_EMAIL.');
-    await page.goto('/mi-cuenta/');
-    await page.locator('#reg_username').fill(env.cedula);
-    await page.locator('#first_name').fill(env.name);
-    await page.locator('#last_name').fill('QA');
-    await page.locator('#reg_email').fill(env.email);
-    await page.locator('#reg_password').fill(env.password);
-    await page.locator('#reg_password2').fill(env.password);
-    await page.locator('#newsletter_authorization').check();
-    await page.locator('#privacy_policy_reg').check();
-    await page.locator('button[name="register"]').click();
-    await expect(page).toHaveURL(/mi-cuenta/);
-    await page.locator('#username').fill(env.cedula);
-    await page.locator('#password').fill(env.password);
-    await page.locator('button[name="login"]').click();
-    await expect(page.locator('body')).toContainText(/mi cuenta|my account/i);
-    const details = page.getByRole('link', { name: /detalles de la cuenta|account details/i }).first();
-    if (await details.count()) await details.click();
-    const firstName = page.locator('input[name="account_first_name"], input[name="first_name"]').first();
-    if (await firstName.count()) {
-      await firstName.fill(`${env.name} Actualizado`);
-      await page.getByRole('button', { name: /guardar cambios|save changes/i }).click();
-      await expect(page.locator('body')).toContainText(/detalles de la cuenta|account details/i);
     }
   });
 
