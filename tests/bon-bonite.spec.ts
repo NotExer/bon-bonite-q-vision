@@ -2,7 +2,10 @@ import { test, expect } from '@playwright/test';
 
 test.describe('Bon-bonite - regresión funcional', () => {
   test('E01 - navegación de módulos comerciales', async ({ page }) => {
-    await page.goto('/');
+    // El storefront mantiene recursos de terceros en carga; esperar el evento
+    // `load` vuelve esta comprobación dependiente de ellos. Para validar la
+    // navegación basta con que el DOM principal ya esté disponible.
+    await page.goto('/', { waitUntil: 'domcontentloaded' });
     const modules = [
       ['Zapatos', '/categoria-producto/zapatos-mujer/'], ['Bolsos', '/categoria-producto/bolsos-mujer/'],
       ['Cinturones', '/categoria-producto/cinturones-mujer/'], ['Accesorios', '/categoria-producto/accesorios-mujer/'],
@@ -17,7 +20,7 @@ test.describe('Bon-bonite - regresión funcional', () => {
   });
 
   test('E03 - compra de producto hasta checkout sin pago real', async ({ page }) => {
-    await page.goto('/producto/tacon-en-cuero-chantilly/');
+    await page.goto('/producto/tacon-en-cuero-chantilly/', { waitUntil: 'domcontentloaded' });
     await expect(page.getByRole('heading', { name: /zueco en cuero chantilly/i })).toBeVisible();
 
     // El usuario selecciona la talla mediante el botón visible. Esperamos a que

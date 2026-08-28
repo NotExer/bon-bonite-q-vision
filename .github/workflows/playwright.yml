@@ -8,7 +8,9 @@ on:
 
 jobs:
   test:
-    timeout-minutes: 10
+    # La auditoría de catálogo puede usar hasta 15 minutos; dejamos margen para
+    # la instalación del navegador y la publicación de evidencias.
+    timeout-minutes: 20
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
