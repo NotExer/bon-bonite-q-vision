@@ -15,8 +15,9 @@ package.json              # scripts y dependencias
 
 ## Escenarios automatizados
 
-1. Navegación y disponibilidad de los módulos Zapatos, Bolsos, Cinturones, Accesorios, Outlet, Bonos de regalo, Mi cuenta y PQRS.
-2. Selección de talla, adición de un producto al carrito y llegada al checkout. El flujo se detiene antes de enviar información personal o realizar un pago.
+1. **E01 - Navegación de módulos:** disponibilidad y `href` de Zapatos, Bolsos, Cinturones, Accesorios, Outlet, Bonos de regalo, Mi cuenta y PQRS.
+2. **CAT-01 - Auditoría catálogo API/front:** consulta la Store API pública y compara, para los productos seleccionados, nombre, precio, moneda, imagen y descripción contra la página visible.
+3. **E03 - Compra hasta checkout:** selecciona talla 36 y cantidad 1, verifica el POST real de añadir al carrito y consulta el endpoint de checkout. El flujo se detiene antes de enviar información personal o realizar un pago.
 
 ## Ejecución
 
@@ -43,6 +44,6 @@ npm run test:catalog
 
 ## Evidencias y límites
 
-En caso de fallo, Playwright conserva screenshot, video y trace. El escenario E03 llega hasta checkout y no confirma un pago. El registro y actualización de usuario quedaron fuera de esta ejecución porque no se cuenta con datos de prueba autorizados.
+En caso de fallo, Playwright conserva screenshot, video y trace. El escenario E03 llega hasta la validación del endpoint de checkout y no confirma un pago. En GitHub Actions, el sitio puede redirigir por geolocalización; el test conserva la evidencia del POST y acepta esa redirección documentada. El registro y actualización de usuario quedaron fuera de esta ejecución porque no se cuenta con datos de prueba autorizados.
 
 La ejecución continua está definida en `.github/workflows/playwright.yml`.
