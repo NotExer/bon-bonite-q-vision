@@ -47,4 +47,6 @@ npm test
 
 En caso de fallo, Playwright conserva screenshot, video y trace. El escenario E03 llega hasta checkout y no confirma un pago. El escenario E02 requiere datos de prueba autorizados y se omite si faltan las variables de entorno.
 
+En la ejecución entregada, E01 y E03 pasan; E02 queda omitido/bloqueado porque no se cuenta con datos de prueba autorizados. No se utilizan datos reales ni se publican credenciales.
+
 La ejecución continua está definida en `.github/workflows/playwright.yml`.
