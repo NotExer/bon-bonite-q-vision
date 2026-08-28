@@ -17,6 +17,15 @@ test.describe('Bon-bonite - regresión funcional', () => {
   });
 
   test('E03 - compra de producto hasta checkout sin pago real', async ({ page }) => {
+    // Evita que el plugin de geolocalización redirija el runner de GitHub al
+    // storefront internacional antes de validar el carrito colombiano.
+    await page.context().addCookies([{
+      name: 'ip2location_redirection_first_visit',
+      value: '1',
+      domain: 'www.bon-bonite.com',
+      path: '/',
+      secure: true,
+    }]);
     await page.goto('/producto/tacon-en-cuero-chantilly/');
     await expect(page.getByRole('heading', { name: /zueco en cuero chantilly/i })).toBeVisible();
 
