@@ -19,12 +19,21 @@ test.describe('Bon-bonite - regresión funcional', () => {
   test('E03 - compra de producto hasta checkout sin pago real', async ({ page }) => {
     await page.goto('/producto/tacon-en-cuero-chantilly/');
     await expect(page.getByRole('heading', { name: /zueco en cuero chantilly/i })).toBeVisible();
-    // El select original está oculto; el usuario interactúa con el botón visible de talla.
+
+    // El usuario selecciona la talla mediante el botón visible. Esperamos a que
+    // el select interno se actualice antes de enviar el formulario.
+    const sizeSelect = page.locator('select[name="attribute_pa_talla"]');
     await page.getByRole('button', { name: '36', exact: true }).click();
+    await expect(sizeSelect).toHaveValue('36');
+    await expect(page.locator('input[name="variation_id"]')).toHaveValue(/^[1-9]\d*$/);
+
     // La cantidad visible inicia en 1; el input auxiliar está oculto.
     await expect(page.locator('input[name="quantity"]')).toHaveValue('1');
     await page.getByRole('button', { name: /añadir al carrito/i }).click();
-    await expect(page.locator('.cart-contents').first()).not.toHaveText('0');
+
+    // El sitio confirma la operación con este aviso. No dependemos del enlace
+    // estándar de WooCommerce ni del contador visual del encabezado.
+    await expect(page.locator('body')).toContainText(/se ha añadido a tu carrito/i);
     await page.goto('/carrito/');
     await expect(page.locator('body')).toContainText(/zueco en cuero chantilly/i);
     const checkout = page.getByRole('link', { name: /finalizar compra|checkout/i }).first();
