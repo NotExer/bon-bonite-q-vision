@@ -4,7 +4,9 @@
   "scripts": {
     "test": "playwright test",
     "test:headed": "playwright test --headed",
+    "test:navigation": "playwright test tests/navigation.spec.ts",
     "test:catalog": "playwright test tests/catalog-api.spec.ts",
+    "test:purchase": "playwright test tests/purchase.spec.ts",
     "report": "playwright show-report"
   },
   "devDependencies": {

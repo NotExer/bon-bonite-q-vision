@@ -7,8 +7,9 @@ Repositorio: https://github.com/NotExer/bon-bonite-q-vision
 ## Estructura
 
 ```text
-tests/bon-bonite.spec.ts  # escenarios E01 y E03
-tests/catalog-api.spec.ts # auditoría API/UI del catálogo
+tests/navigation.spec.ts  # escenario E01
+tests/catalog-api.spec.ts # escenario CAT-01: auditoría API/UI del catálogo
+tests/purchase.spec.ts    # escenario E03
 playwright.config.ts      # configuración, reportes y evidencias
 package.json              # scripts y dependencias
 ```
@@ -33,6 +34,13 @@ Para ejecutar un escenario específico:
 npx playwright test -g "E01"
 npx playwright test -g "E03"
 npm run test:catalog
+```
+
+También puedes ejecutar cada archivo directamente:
+
+```bash
+npm run test:navigation
+npm run test:purchase
 ```
 
 La auditoría de catálogo consulta la Store API pública de WooCommerce y compara cada producto seleccionado contra su página visible: nombre, precio, moneda, imagen y fragmento de descripción. Por defecto revisa 5 productos por categoría para mantener una ejecución práctica. Para auditar todos los productos de Zapatos, Bolsos, Cinturones, Accesorios y Outlet:

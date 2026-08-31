@@ -1,24 +1,6 @@
 import { test, expect } from '@playwright/test';
 
 test.describe('Bon-bonite - regresión funcional', () => {
-  test('E01 - navegación de módulos comerciales', async ({ page }) => {
-    // El storefront mantiene recursos de terceros en carga; esperar el evento
-    // `load` vuelve esta comprobación dependiente de ellos. Para validar la
-    // navegación basta con que el DOM principal ya esté disponible.
-    await page.goto('/', { waitUntil: 'domcontentloaded' });
-    const modules = [
-      ['Zapatos', '/categoria-producto/zapatos-mujer/'], ['Bolsos', '/categoria-producto/bolsos-mujer/'],
-      ['Cinturones', '/categoria-producto/cinturones-mujer/'], ['Accesorios', '/categoria-producto/accesorios-mujer/'],
-      ['Outlet', '/categoria-producto/outlet/'], ['Bonos de regalo', '/producto/bono-de-regalo/'],
-      ['Mi cuenta', '/mi-cuenta/'], ['PQRS', '/pqrs/'],
-    ] as const;
-    for (const [label, href] of modules) {
-      const link = page.getByRole('link', { name: label, exact: true }).first();
-      await expect(link, `Módulo visible: ${label}`).toBeVisible();
-      await expect(link).toHaveAttribute('href', new RegExp(href.replaceAll('/', '\\/')));
-    }
-  });
-
   test('E03 - compra de producto hasta checkout sin pago real', async ({ page }) => {
     await page.goto('/producto/tacon-en-cuero-chantilly/', { waitUntil: 'domcontentloaded' });
     await expect(page.getByRole('heading', { name: /zueco en cuero chantilly/i })).toBeVisible();
@@ -32,6 +14,7 @@ test.describe('Bon-bonite - regresión funcional', () => {
 
     // La cantidad visible inicia en 1; el input auxiliar está oculto.
     await expect(page.locator('input[name="quantity"]')).toHaveValue('1');
+
     // Validamos el envío real del formulario de compra. El storefront puede
     // redirigir al runner de GitHub según su IP, pero la solicitud POST al
     // producto sigue siendo observable y contiene la variación seleccionada.
